@@ -1,3 +1,6 @@
+
+* Test drive
+
 #+BEGIN_SRC python :results output
   import sys
   import logging as lg
@@ -167,3 +170,54 @@
     6.91946022e-05 7.84077564e-05 0.00000000e+00 0.00000000e+00
     0.00000000e+00 0.00000000e+00 0.00000000e+00]]
 #+end_example
+
+* Module 
+
+#+BEGIN_SRC python
+  def reduce_lum(obj, mask, kernel) :
+    kernel_1 = kernel * mask
+    kernel_1 /= np.sum(kernel_1)
+    lg.debug('Sum of Gaussian Kernel: %0.2g', np.sum(kernel_1))
+
+    luminosity_mat = kernel_1 * obj
+    luminosity = np.sum(luminosity_mat)
+    lg.debug ('Luminosity Score of obj at center: %0.2g', luminosity)
+
+    return luminosity
+
+
+  def diff_lum(obj_1, mask_1, obj_2, mask_2, kernel) :
+
+    lum_1 = reduce_lum(obj_1, mask_1, kernel)
+    lum_2 = reduce_lum(obj_2, mask_2, kernel)
+
+    return abs(lum_1 - lum_2)
+
+#+END_SRC
+
+* Select points at random from a given mask
+
+#+BEGIN_SRC python :results output
+  import sys
+  import logging as lg
+  lg.basicConfig(level=lg.DEBUG, format='%(levelname)-8s: %(message)s', 
+                 stream=sys.stdout)
+
+  import numpy as np
+
+  from image_functions import open_image
+
+  mask_1 = open_image('mask_1.png')
+  if mask_1 is not None :
+    lg.info('Opened mask_1')
+
+  points_1 = np.nonzero(mask_1)
+  points_1 = np.array(points_1, dtype=np.int32)
+  lg.info('points_1.shape: %s', points_1.shape)
+#+END_SRC
+
+#+RESULTS:
+: INFO    : Success opening : mask_1.png, (11, 11)
+: INFO    : @`mask_1.png' (min, max, mu, sigma): 0, 1, 0.3, 0.46
+: INFO    : Opened mask_1
+: INFO    : points_1.shape: (2, 36)

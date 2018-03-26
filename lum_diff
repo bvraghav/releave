@@ -1,0 +1,17 @@
+#! /bin/bash
+
+PRE=$1
+[ -z $PRE ] && {
+  PRE=~/data/releave/indian_army
+  echo 'W: Missing prefix folder as arg_1. Using '$PRE' instead.' >&2
+}
+
+while read LINE ; do
+  F1=`echo $LINE | cut -d, -f1`
+  F2=`echo $LINE | cut -d, -f2`
+  for K in 3 5 7 9 11 ; do
+    python main.py $PRE/master.png $PRE/$F1 $PRE/$F2 $K 1000 2>&1
+    echo
+  done
+done < $PRE/comparison.txt | \
+  tee $PRE/lum_diff.log
